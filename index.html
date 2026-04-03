@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Projeto Forma</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<style>
+body{
+  margin:0;
+  font-family: Arial;
+  background:#111;
+  color:#fff;
+}
+
+.container{
+  max-width:420px;
+  margin:auto;
+  padding:15px;
+}
+
+.card{
+  background:#1c1c1c;
+  padding:15px;
+  border-radius:12px;
+  margin-top:12px;
+}
+
+.promo{
+  background:#ff6600;
+  padding:10px;
+  border-radius:10px;
+  text-align:center;
+  font-weight:bold;
+  animation:pulse 1.5s infinite;
+}
+
+@keyframes pulse{
+  0%{opacity:1;}
+  50%{opacity:0.7;}
+  100%{opacity:1;}
+}
+
+input, select, textarea{
+  width:100%;
+  padding:10px;
+  margin-top:8px;
+  border-radius:8px;
+  border:none;
+  background:#2a2a2a;
+  color:#fff;
+  font-size:14px;
+}
+
+textarea{
+  height:70px;
+}
+
+button{
+  width:100%;
+  padding:12px;
+  margin-top:12px;
+  border:none;
+  border-radius:8px;
+  background:#0f9ef1;
+  color:#fff;
+  font-weight:bold;
+}
+
+.pix{
+  text-align:center;
+}
+
+.pix img{
+  width:150px;
+  margin-top:10px;
+}
+
+/* WHATS */
+.whatsapp{
+  position:fixed;
+  bottom:70px;
+  right:15px;
+  background:#25d366;
+  padding:10px 14px;
+  border-radius:30px;
+  display:flex;
+  gap:5px;
+  align-items:center;
+  animation:pulse 2s infinite;
+}
+
+.whatsapp img{
+  width:20px;
+}
+
+/* LETREIRO */
+.banner{
+  position:fixed;
+  bottom:0;
+  width:100%;
+  background:#ff6600;
+  overflow:hidden;
+}
+
+.marquee{
+  display:flex;
+  width:max-content;
+  animation:marquee 12s linear infinite;
+}
+
+.marquee span{
+  white-space:nowrap;
+  padding-right:50px;
+  font-weight:bold;
+}
+
+@keyframes marquee{
+  0%{transform:translateX(0);}
+  100%{transform:translateX(-50%);}
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div style="text-align:center;">
+<img src="download.jfif" style="width:120px;">
+</div>
+
+<h2 style="text-align:center;color:#ff6600;">Projeto Forma</h2>
+
+<div class="card pix">
+
+<div class="promo">PROMOÇÃO APENAS R$1,00</div>
+
+<img src="qr.png.jpeg">
+
+
+<input type="text" id="pix" value="5fdeecdf-10eb-47ae-95bc-a4f1f5170744" readonly>
+<button onclick="copiar()">Copiar PIX</button>
+
+<p>Após pagar, você recebe seu código 🔑</p>
+</div>
+
+<div class="card">
+
+<input id="nome" placeholder="Seu nome">
+<input id="peso" placeholder="Peso (kg)">
+
+<select id="freq">
+<option value="1">1x por semana</option>
+<option value="2">2x por semana</option>
+<option value="3">3x por semana</option>
+<option value="4">4x por semana</option>
+<option value="5">5x por semana</option>
+<option value="6">6x por semana</option>
+<option value="7">7x por semana</option>
+</select>
+
+<textarea id="obj" placeholder="Ex: Ganhar massa muscular, emagrecer, resistência..."></textarea>
+<input id="codigo" placeholder="Código">
+
+<button onclick="gerarPDF()">Gerar treino</button>
+
+</div>
+</div>
+
+<div class="whatsapp" onclick="window.open('https://wa.me/5599999999999')">
+<img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg">
+Ajuda
+</div>
+
+<div class="banner">
+<div class="marquee">
+<span>Seu corpo muda quando sua disciplina começa • Resultados vêm da consistência • </span>
+<span>Seu corpo muda quando sua disciplina começa • Resultados vêm da consistência • </span>
+</div>
+</div>
+
+<script>
+
+const codigos = ["1234","abcd"];
+
+function copiar(){
+  let p = document.getElementById("pix");
+  p.select();
+  document.execCommand("copy");
+  alert("PIX copiado!");
+}
+
+function gerarPDF(){
+
+const { jsPDF } = window.jspdf;
+
+let nome = document.getElementById("nome").value;
+let peso = document.getElementById("peso").value;
+let freq = parseInt(document.getElementById("freq").value);
+let obj = document.getElementById("obj").value.toLowerCase();
+let codigo = document.getElementById("codigo").value;
+
+if(!nome || !peso || !obj){
+  alert("Preencha os dados!");
+  return;
+}
+
+if(!codigos.includes(codigo)){
+  alert("Código inválido!");
+  return;
+}
+
+let doc = new jsPDF();
+
+/* HEADER */
+doc.setFillColor(255,102,0);
+doc.rect(0,0,210,30,'F');
+
+doc.setTextColor(255,255,255);
+doc.setFontSize(18);
+doc.text("PROJETO FORMA", 65, 18);
+
+doc.setFontSize(10);
+doc.text("Seu plano de treino personalizado", 60, 25);
+
+doc.setTextColor(0,0,0);
+
+/* DADOS */
+doc.setDrawColor(255,102,0);
+doc.rect(15, 35, 180, 40);
+
+doc.setFontSize(12);
+doc.text(`Nome: ${nome}`, 20, 45);
+doc.text(`Peso: ${peso}kg`, 20, 55);
+doc.text(`Frequência: ${freq}x/semana`, 20, 65);
+
+let objText = doc.splitTextToSize(`Objetivo: ${obj}`, 170);
+doc.text(objText, 20, 75);
+
+/* PLANO */
+let plano = [];
+
+if(freq === 1) plano = ["Full Body"];
+else if(freq === 2) plano = ["Superior","Inferior"];
+else if(freq === 3) plano = ["Peito + Tríceps","Costas + Bíceps","Pernas"];
+else if(freq === 4) plano = ["Peito","Costas","Pernas","Ombro"];
+else if(freq === 5) plano = ["Peito","Costas","Pernas","Ombro","Braços"];
+else if(freq === 6) plano = ["Peito","Costas","Pernas","Ombro","Braços","Cardio"];
+else plano = ["Peito","Costas","Pernas","Ombro","Braços","Cardio","Descanso ativo"];
+
+let y = 90;
+
+plano.forEach((dia, index) => {
+
+if(y > 250){
+  doc.addPage();
+  y = 20;
+}
+
+doc.setFillColor(240,240,240);
+doc.rect(15, y-5, 180, 10, 'F');
+
+doc.setFontSize(12);
+doc.text(`${index+1}º Dia - ${dia}`, 20, y);
+
+y += 8;
+
+let exercicios = getExercicios(dia);
+
+doc.setFontSize(10);
+
+exercicios.forEach(ex => {
+  doc.text(`• ${ex}`, 25, y);
+  y += 6;
+});
+
+y += 6;
+
+});
+
+/* RESULTADO */
+let resultado = "";
+
+if(obj.includes("massa")){
+resultado = "🔥 Potencial: +2 a 5kg de massa em 8-12 semanas";
+}else if(obj.includes("emagrecer")){
+resultado = "🔥 Potencial: -3 a 8kg em 4-8 semanas";
+}else{
+resultado = "🔥 Potencial: melhora física geral";
+}
+
+if(y > 250){
+doc.addPage();
+y = 20;
+}
+
+doc.setDrawColor(255,102,0);
+doc.rect(15, y, 180, 15);
+
+doc.setFontSize(11);
+doc.text(resultado, 20, y + 10);
+
+/* RODAPÉ */
+doc.setFontSize(9);
+doc.text("Projeto Forma • Disciplina gera resultado 💪", 20, 290);
+
+doc.save(`treino_${nome}.pdf`);
+}
+
+/* EXERCÍCIOS */
+function getExercicios(tipo){
+
+if(tipo.includes("Peito")){
+return ["Supino reto 4x8-12","Supino inclinado 3x10","Crucifixo 3x12","Flexão até falha"];
+}
+
+if(tipo.includes("Costas")){
+return ["Puxada frontal 4x10","Remada curvada 3x10","Pulldown 3x12"];
+}
+
+if(tipo.includes("Pernas")){
+return ["Agachamento 4x8","Leg press 3x12","Cadeira extensora 3x12","Panturrilha 4x15"];
+}
+
+if(tipo.includes("Ombro")){
+return ["Desenvolvimento 4x10","Elevação lateral 3x12","Elevação frontal 3x12"];
+}
+
+if(tipo.includes("Braços")){
+return ["Rosca direta 3x10","Rosca martelo 3x10","Tríceps corda 3x12"];
+}
+
+if(tipo.includes("Full")){
+return ["Supino 3x10","Agachamento 3x10","Puxada 3x10","Abdominal 3x20"];
+}
+
+if(tipo.includes("Cardio")){
+return ["Corrida 20min","Bicicleta 15min","Abdominal 3x20"];
+}
+
+if(tipo.includes("Superior")){
+return ["Treino completo superior"];
+}
+
+if(tipo.includes("Inferior")){
+return ["Treino completo inferior"];
+}
+
+if(tipo.includes("Descanso")){
+return ["Alongamento","Caminhada leve"];
+}
+
+return ["Treino geral"];
+
+}
+
+</script>
+
+</body>
+</html>
